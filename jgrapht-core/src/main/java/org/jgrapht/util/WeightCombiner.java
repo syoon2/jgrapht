@@ -18,12 +18,13 @@
 package org.jgrapht.util;
 
 import java.io.*;
+import java.util.function.DoubleBinaryOperator;
 
 /**
  * Binary operator for edge weights. There are some prewritten operators.
  */
 @FunctionalInterface
-public interface WeightCombiner
+public interface WeightCombiner extends DoubleBinaryOperator
 {
     /**
      * Sum of weights.
@@ -64,4 +65,19 @@ public interface WeightCombiner
      * @return result of the operator
      */
     double combine(double a, double b);
+
+    /**
+     * Applies the operator to the given operands.
+     * 
+     * @param left the first operand
+     * @param right the second operand
+     * @return the result of the operator
+     * 
+     * @since 1.5.3
+     */
+    @Override
+    default double applyAsDouble(double left, double right) {
+        return combine(left, right);
+    }
+
 }
