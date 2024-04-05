@@ -28,15 +28,18 @@ import java.util.function.*;
  * Read-only union of two graphs.
  * 
  * <p>
- * Read-only union of two graphs: G<sub>1</sub> and G<sub>2</sub>. If G<sub>1</sub> =
- * (V<sub>1</sub>, E<sub>1</sub>) and G<sub>2</sub> = (V<sub>2</sub>, E<sub>2</sub>) then their
- * union G = (V, E), where V is the union of V<sub>1</sub> and V<sub>2</sub>, and E is the union of
- * E<sub>1</sub> and E<sub>2</sub>. A {@link WeightCombiner} in order to calculate edge weights.
+ * Given two graphs $G_1 = (V_1, E_1)$ and $G_2 = (V_2, E_2)$, their
+ * union is $G = (V, E)$, where $V = V_1 \cup V_2$ and $E = E_1 \cup E_2$.
+ * A {@link WeightCombiner} is used in order to calculate the combined edge weights.
+ * This union is <i>read-only</i>, and any method that tries to modify
+ * throws an {@link UnsupportedOperationException}.
  * 
  * @param <V> the vertex type
  * @param <E> the edge type
  * 
  * @author Ilya Razenshteyn
+ * 
+ * @see WeightCombiner
  */
 public class AsGraphUnion<V, E>
     extends AbstractGraph<V, E>

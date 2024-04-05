@@ -21,7 +21,9 @@ import java.io.*;
 import java.util.function.DoubleBinaryOperator;
 
 /**
- * Binary operator for edge weights. There are some prewritten operators.
+ * Binary operator for combining the edge weights. Some predefined operators are also included.
+ * 
+ * @see org.jgrapht.graph.AsGraphUnion
  */
 @FunctionalInterface
 public interface WeightCombiner extends DoubleBinaryOperator
@@ -59,15 +61,16 @@ public interface WeightCombiner extends DoubleBinaryOperator
     /**
      * Combines two weights.
      *
-     * @param a first weight
-     * @param b second weight
+     * @param a the first weight
+     * @param b the second weight
      *
-     * @return result of the operator
+     * @return the combined weight
      */
     double combine(double a, double b);
 
     /**
      * Applies the operator to the given operands.
+     * This method is an alias of {@link #combine(double, double)}.
      * 
      * @param left the first operand
      * @param right the second operand
