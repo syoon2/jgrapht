@@ -29,7 +29,7 @@ public interface WeightCombiner extends DoubleBinaryOperator
     /**
      * Sum of weights.
      */
-    WeightCombiner SUM = (WeightCombiner & Serializable) (a, b) -> a + b;
+    WeightCombiner SUM = (WeightCombiner & Serializable) Double::sum;
 
     /**
      * Multiplication of weights.
