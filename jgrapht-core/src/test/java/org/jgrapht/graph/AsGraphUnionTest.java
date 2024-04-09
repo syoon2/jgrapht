@@ -22,6 +22,7 @@ import org.jgrapht.util.*;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
+import java.util.function.DoubleBinaryOperator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -265,52 +266,63 @@ public class AsGraphUnionTest
         assertFalse(graphUnion.containsEdge(v4, v3)); // directed edge
     }
 
-    /**
-     * Test the weight combiner for graphs having an edge in common.
-     */
-    @Test
-    public void testWeightCombiner()
-    {
-        // Create two graphs, both having the same vertices {0,1} and the same weighted edge (0,1)
-        SimpleWeightedGraph<Integer, DefaultWeightedEdge> g1 =
-            new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-        Graphs.addAllVertices(g1, Arrays.asList(0, 1));
-        DefaultWeightedEdge edge = g1.addEdge(0, 1);
-        g1.setEdgeWeight(edge, 10);
+    @DisplayName("Weight combiner tests")
+    @Nested
+    public class WeightCombinerTest {
 
-        SimpleWeightedGraph<Integer, DefaultWeightedEdge> g2 =
-            new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-        Graphs.addAllVertices(g2, Arrays.asList(0, 1));
-        g2.addEdge(0, 1, edge);
-        // We need to create a mask of the second graph if we want to store the edge with a
-        // different weight. Simply setting g2.setEdgeWeight(edge,20) would override the edge weight
-        // for the same edge in g1 as well!
-        Map<DefaultWeightedEdge, Double> weightMap = new HashMap<>();
-        weightMap.put(edge, 20.0);
-        Graph<Integer, DefaultWeightedEdge> g2Masked = new AsWeightedGraph<>(g2, weightMap);
+        @Test
+        public void testInheritance() {
+            assertInstanceOf(DoubleBinaryOperator.class, WeightCombiner.SUM);
+            assertInstanceOf(DoubleBinaryOperator.class, WeightCombiner.MULT);
+        }
 
-        Graph<Integer, DefaultWeightedEdge> graphUnionSum =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.SUM);
-        assertEquals(30.0, graphUnionSum.getEdgeWeight(edge), 0);
-        Graph<Integer, DefaultWeightedEdge> graphUnionFirst =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.FIRST);
-        assertEquals(10.0, graphUnionFirst.getEdgeWeight(edge), 0);
-        Graph<Integer, DefaultWeightedEdge> graphUnionSecond =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.SECOND);
-        assertEquals(20.0, graphUnionSecond.getEdgeWeight(edge), 0);
-        Graph<Integer, DefaultWeightedEdge> graphUnionMax =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MAX);
-        assertEquals(20.0, graphUnionMax.getEdgeWeight(edge), 0);
-        Graph<Integer, DefaultWeightedEdge> graphUnionMin =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MIN);
-        assertEquals(10.0, graphUnionMin.getEdgeWeight(edge), 0);
-        Graph<Integer, DefaultWeightedEdge> graphUnionMult =
-            new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MULT);
-        assertEquals(200.0, graphUnionMult.getEdgeWeight(edge), 0);
+        /**
+         * Test the weight combiner for graphs having an edge in common.
+         */
+        @Test
+        public void testWeightCombiner()
+        {
+            // Create two graphs, both having the same vertices {0,1} and the same weighted edge (0,1)
+            SimpleWeightedGraph<Integer, DefaultWeightedEdge> g1 =
+                new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+            Graphs.addAllVertices(g1, Arrays.asList(0, 1));
+            DefaultWeightedEdge edge = g1.addEdge(0, 1);
+            g1.setEdgeWeight(edge, 10);
 
-        assertEquals(10.0, g1.getEdgeWeight(edge), 0);
-        assertEquals(10.0, g2.getEdgeWeight(edge), 0);
-        assertEquals(20.0, g2Masked.getEdgeWeight(edge), 0);
+            SimpleWeightedGraph<Integer, DefaultWeightedEdge> g2 =
+                new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+            Graphs.addAllVertices(g2, Arrays.asList(0, 1));
+            g2.addEdge(0, 1, edge);
+            // We need to create a mask of the second graph if we want to store the edge with a
+            // different weight. Simply setting g2.setEdgeWeight(edge,20) would override the edge weight
+            // for the same edge in g1 as well!
+            Map<DefaultWeightedEdge, Double> weightMap = new HashMap<>();
+            weightMap.put(edge, 20.0);
+            Graph<Integer, DefaultWeightedEdge> g2Masked = new AsWeightedGraph<>(g2, weightMap);
+
+            Graph<Integer, DefaultWeightedEdge> graphUnionSum =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.SUM);
+            assertEquals(30.0, graphUnionSum.getEdgeWeight(edge), 0);
+            Graph<Integer, DefaultWeightedEdge> graphUnionFirst =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.FIRST);
+            assertEquals(10.0, graphUnionFirst.getEdgeWeight(edge), 0);
+            Graph<Integer, DefaultWeightedEdge> graphUnionSecond =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.SECOND);
+            assertEquals(20.0, graphUnionSecond.getEdgeWeight(edge), 0);
+            Graph<Integer, DefaultWeightedEdge> graphUnionMax =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MAX);
+            assertEquals(20.0, graphUnionMax.getEdgeWeight(edge), 0);
+            Graph<Integer, DefaultWeightedEdge> graphUnionMin =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MIN);
+            assertEquals(10.0, graphUnionMin.getEdgeWeight(edge), 0);
+            Graph<Integer, DefaultWeightedEdge> graphUnionMult =
+                new AsGraphUnion<>(g1, g2Masked, WeightCombiner.MULT);
+            assertEquals(200.0, graphUnionMult.getEdgeWeight(edge), 0);
+
+            assertEquals(10.0, g1.getEdgeWeight(edge), 0);
+            assertEquals(10.0, g2.getEdgeWeight(edge), 0);
+            assertEquals(20.0, g2Masked.getEdgeWeight(edge), 0);
+        }
     }
 
 }
